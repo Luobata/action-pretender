@@ -1,22 +1,23 @@
 {
-  "name": "action-pretender",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Luobata/action-pretender.git"
-  },
-  "author": "luobata",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Luobata/action-pretender/issues"
-  },
-  "homepage": "https://github.com/Luobata/action-pretender#readme",
-  "devDependencies": {
-    "esbuild": "^0.13.13"
-  }
+    "name": "action-pretender",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "node build/bundle.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Luobata/action-pretender.git"
+    },
+    "author": "luobata",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Luobata/action-pretender/issues"
+    },
+    "homepage": "https://github.com/Luobata/action-pretender#readme",
+    "devDependencies": {
+        "esbuild": "^0.13.13"
+    }
 }
