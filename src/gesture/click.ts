@@ -13,13 +13,30 @@ export default class extends SingleFingerGesture {
     public mockEvent(): void {
         const el = document.elementFromPoint(this._x, this._y);
 
+        type a = PointerEventInit;
+        const pointdown = new PointerEvent('pointdown', {
+            tiltX: this._x,
+            tiltY: this._y,
+            pointerId: 1,
+            pressure: 0.5,
+        });
+        const pointup = new PointerEvent('pointerup', {
+            tiltX: this._x,
+            tiltY: this._y,
+            pointerId: 1,
+            pressure: 0,
+        });
+        const click = new PointerEvent('click', {
+            tiltX: this._x,
+            tiltY: this._y,
+            pointerId: 1,
+            pressure: 0,
+        });
         const mousedown = new MouseEvent('mousedown', {
             clientX: this._x,
             clientY: this._y,
             movementX: 0,
             movementY: 0,
-            // button: 0,
-            // buttons: 0,
             relatedTarget: el,
         });
         const mouseup = new MouseEvent('mouseup', {
@@ -27,12 +44,13 @@ export default class extends SingleFingerGesture {
             clientY: this._y,
             movementX: 0,
             movementY: 0,
-            // button: 0,
-            // buttons: 0,
             relatedTarget: el,
         });
 
+        el.dispatchEvent(pointdown);
         el.dispatchEvent(mousedown);
+        el.dispatchEvent(pointup);
         el.dispatchEvent(mouseup);
+        el.dispatchEvent(click);
     }
 }
