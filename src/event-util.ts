@@ -26,12 +26,37 @@ export function Pointer(
     pressure: number = 1,
     pointerId: number = 1,
     eventInitDict?: PointerEventInit,
-): MouseEvent {
+): PointerEvent {
     return new PointerEvent(type, {
         tiltX: x,
         tiltY: y,
         pressure,
         pointerId
+        ...eventInitDict,
+    });
+}
+
+// single touch
+export function sTouch(
+    type: string,
+    x: number,
+    y: number,
+    target: MouseEventInit['relatedTarget'],
+    eventInitDict?: TouchEventInit,
+): TouchEvent {
+    const touch = new Touch({
+        clientX: x, 
+        clientY: y, 
+        identifier: 0,
+        target,
+    });
+
+
+
+    return new TouchEvent(type, {
+        touches: [touch],
+        changedTouches: [touch],
+        targetTouches: [touch],
         ...eventInitDict,
     });
 }
