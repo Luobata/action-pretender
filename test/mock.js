@@ -5,6 +5,9 @@ const events = [
     'mouseup',
     'pointerup',
     'pointerdown',
+    'touchstart',
+    'touchend',
+    'touchcancel',
 ]
 
 const app = document.getElementById('app');

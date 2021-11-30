@@ -3,6 +3,7 @@
  * 针对pc用户点击
  */
 
+import { Mouse, Pointer } from '../event-util';
 import SingleFingerGesture from './single-finger-gesture';
 
 export default class extends SingleFingerGesture {
@@ -13,43 +14,15 @@ export default class extends SingleFingerGesture {
     public mockEvent(): void {
         const el = document.elementFromPoint(this._x, this._y);
 
-        type a = PointerEventInit;
-        const pointdown = new PointerEvent('pointdown', {
-            tiltX: this._x,
-            tiltY: this._y,
-            pointerId: 1,
-            pressure: 0.5,
-        });
-        const pointup = new PointerEvent('pointerup', {
-            tiltX: this._x,
-            tiltY: this._y,
-            pointerId: 1,
-            pressure: 0,
-        });
-        const click = new PointerEvent('click', {
-            tiltX: this._x,
-            tiltY: this._y,
-            pointerId: 1,
-            pressure: 0,
-        });
-        const mousedown = new MouseEvent('mousedown', {
-            clientX: this._x,
-            clientY: this._y,
-            movementX: 0,
-            movementY: 0,
-            relatedTarget: el,
-        });
-        const mouseup = new MouseEvent('mouseup', {
-            clientX: this._x,
-            clientY: this._y,
-            movementX: 0,
-            movementY: 0,
-            relatedTarget: el,
-        });
+        const pointerdown = Pointer('pointerdown', this._x, this._y, 0.5);
+        const pointerup = Pointer('pointerup', this._x, this._y, 0);
+        const click = Pointer('click', this._x, this._y, 0);
+        const mousedown = Mouse('mousedown', this._x, this._y, el);
+        const mouseup = Mouse('mouseup', this._x, this._y, el);
 
-        el.dispatchEvent(pointdown);
+        el.dispatchEvent(pointerdown);
         el.dispatchEvent(mousedown);
-        el.dispatchEvent(pointup);
+        el.dispatchEvent(pointerup);
         el.dispatchEvent(mouseup);
         el.dispatchEvent(click);
     }
