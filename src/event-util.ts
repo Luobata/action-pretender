@@ -17,8 +17,6 @@ export function Mouse(
     });
 }
 
-
-
 export function Pointer(
     type: string,
     x: number,
@@ -31,7 +29,7 @@ export function Pointer(
         tiltX: x,
         tiltY: y,
         pressure,
-        pointerId
+        pointerId,
         ...eventInitDict,
     });
 }
@@ -45,13 +43,11 @@ export function sTouch(
     eventInitDict?: TouchEventInit,
 ): TouchEvent {
     const touch = new Touch({
-        clientX: x, 
-        clientY: y, 
+        clientX: x,
+        clientY: y,
         identifier: 0,
         target,
     });
-
-
 
     return new TouchEvent(type, {
         touches: [touch],

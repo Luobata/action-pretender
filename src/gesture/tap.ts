@@ -3,7 +3,7 @@
  * 针对pc用户点击
  */
 
-import { Mouse, Pointer } from '../event-util';
+import { Mouse, Pointer, sTouch } from '../event-util';
 import SingleFingerGesture from './single-finger-gesture';
 
 export default class extends SingleFingerGesture {
@@ -19,11 +19,15 @@ export default class extends SingleFingerGesture {
         const click = Pointer('click', this._x, this._y, 0);
         const mousedown = Mouse('mousedown', this._x, this._y, el);
         const mouseup = Mouse('mouseup', this._x, this._y, el);
+        const touchstart = sTouch('touchstart', this._x, this._y, el);
+        const touchend = sTouch('touchstart', this._x, this._y, el);
 
         el.dispatchEvent(pointerdown);
-        el.dispatchEvent(mousedown);
+        el.dispatchEvent(touchstart);
         el.dispatchEvent(pointerup);
+        el.dispatchEvent(touchend);
         el.dispatchEvent(mouseup);
+        el.dispatchEvent(mousedown);
         el.dispatchEvent(click);
     }
 }
