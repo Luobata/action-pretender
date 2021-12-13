@@ -1,5 +1,6 @@
 
 const events = [
+    'dblclick',
     'click',
     'mousedown',
     'mouseup',
