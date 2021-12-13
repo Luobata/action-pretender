@@ -9,6 +9,13 @@ const events = [
     'touchstart',
     'touchend',
     'touchcancel',
+    'contextmenu',
+
+    // 'mousemove',
+    // 'mouseenter',
+    // 'mouseover',
+    // 'mouseleave',
+    // 'mouseout',
 ]
 
 const app = document.getElementById('app');
