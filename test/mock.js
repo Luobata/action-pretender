@@ -19,9 +19,13 @@ const events = [
 ]
 
 const app = document.getElementById('app');
+const app2 = document.getElementById('app2');
 
 events.forEach((t) => {
     app.addEventListener(t, e => {
-        console.log(t, e)
+        console.log('red', t, e)
+    })
+    app2.addEventListener(t, e => {
+        console.log('blue', t, e)
     })
 })
