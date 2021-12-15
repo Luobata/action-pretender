@@ -11,11 +11,11 @@ const events = [
     'touchcancel',
     'contextmenu',
 
-    // 'mousemove',
-    // 'mouseenter',
-    // 'mouseover',
-    // 'mouseleave',
-    // 'mouseout',
+     'mousemove',
+     'mouseenter',
+     'mouseover',
+     'mouseleave',
+     'mouseout',
 ]
 
 const app = document.getElementById('app');

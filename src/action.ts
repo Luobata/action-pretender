@@ -6,6 +6,12 @@
 
 import { Mouse, Pointer } from './event-util';
 
+type moveAction = {
+    x: number;
+    y: number;
+    stepTime: number;
+};
+
 export default class EventAction {
     // 起始坐标
     private _x: number;
@@ -13,6 +19,8 @@ export default class EventAction {
 
     private _time: number;
     private _currentTarget: Element;
+
+    private _moveAction: moveAction[] = [];
 
     constructor(x: number, y: number) {
         this._x = x;
@@ -76,6 +84,7 @@ export default class EventAction {
 
             this._triggerEvent(pointerup);
             this._triggerEvent(mouseup);
+            // 如果down和up的节点相同才会触发click
             if (this._currentTarget === el) {
                 const click = Pointer('click', this._x, this._y, 0);
                 this._triggerEvent(click);
@@ -87,30 +96,139 @@ export default class EventAction {
         return this;
     }
 
-    public move(): EventAction {
-        // TODO
+    /**
+     * 从 { this._x this._y } 到目标x，y之间线性移动
+     * @param x
+     * @param y
+     * @param t 移动事件 默认1s
+     * @returns
+     */
+    public move(x: number, y: number, t: number = 1000): EventAction {
+        // TODO 考虑如果一次移动没有结束时再次移动怎么处理
+        if (this._moveAction.length) {
+            this._forceStopMove();
+        }
+
+        // 假设每次移动需要固定时间
+        // 应该按照距离拆分 基本上1-2px为一个单位 这里要改下 来保证不会错过事件
+        // 按照固定分割分成多个任务
+        const stepTime = 200;
+        const step = t / stepTime;
+        for (let i: number = 0; i < step; i++) {
+            this._moveAction.push({
+                x: ((x - this._x) / step) * i + this._x,
+                y: ((y - this._y) / step) * i + this._y,
+                stepTime,
+            });
+        }
+
+        if (this._moveAction.length) {
+            this._generateMove();
+        }
+
         return this;
     }
 
-    public sleep(): EventAction {
-        // TODO
+    /**
+     * 停留
+     * @param t 时间 单位ms
+     */
+    public sleep(t: number): EventAction {
+        this._time += t;
+        // TODO 等待t时间
+
         return this;
+    }
+
+    // 根据moveAction队列来触发事件
+    private _generateMove(): void {
+        if (this._moveAction.length) {
+            const action = this._moveAction.shift();
+            // 处理move in out over之类的
+
+            const el = this._getEl(action.x, action.y);
+
+            // 顺序是 旧节点move out leave 新节点over enter move
+
+            if (el !== this._currentTarget) {
+                // 有一个是不冒泡的要注意下
+                const mouseout = Mouse(
+                    'mouseout',
+                    action.x,
+                    action.y,
+                    this._currentTarget,
+                );
+                const mouseleave = Mouse(
+                    'mouseleave',
+                    action.x,
+                    action.y,
+                    this._currentTarget,
+                );
+
+                this._triggerEvent(mouseout);
+                this._triggerEvent(mouseleave);
+
+                const mouseover = Mouse('mouseout', action.x, action.y, el);
+                const mouseenter = Mouse('mouseleave', action.x, action.y, el);
+                const mousemove = Mouse('mousedown', action.x, action.y, el, {
+                    movementX: action.x - this._x,
+                    movementY: action.y - this._y,
+                });
+
+                this._triggerEvent(mouseover, el);
+                this._triggerEvent(mouseenter, el);
+                this._triggerEvent(mousemove, el);
+
+                this._currentTarget = el;
+            } else {
+                const mousemove = Mouse(
+                    'mousedown',
+                    action.x,
+                    action.y,
+                    this._currentTarget,
+                    {
+                        movementX: action.x - this._x,
+                        movementY: action.y - this._y,
+                    },
+                );
+                this._triggerEvent(mousemove, this._currentTarget);
+            }
+
+            // 执行完再setTimeout保证不会有任务被取消了还在异步中被执行到
+            setTimeout(() => {
+                this._generateMove();
+            }, action.stepTime);
+        }
+    }
+
+    // 用来提前终止move
+    private _forceStopMove(): void {
+        // 清空队列
+        this._moveAction = [];
     }
 
     /**
      * 获取当前坐标元素
      */
-    private _getEl(): Element {
-        const el = document.elementFromPoint(this._x, this._y);
+    private _getEl(x?: number, y?: number): Element {
+        // 防止0漏了
+        const el = document.elementFromPoint(
+            x === undefined ? x : this._x,
+            y === undefined ? y : this._y,
+        );
 
         return el;
     }
 
-    private _triggerEvent(event: Event): void {
+    private _triggerEvent(event: Event, target?: Element): void {
         if (!this._currentTarget) {
             return;
         }
 
-        this._currentTarget.dispatchEvent(event);
+        if (target) {
+            target.dispatchEvent(event);
+        } else {
+            this._currentTarget.dispatchEvent(event);
+        }
     }
 }
