@@ -221,14 +221,11 @@ export default class EventAction {
     }
 
     private _triggerEvent(event: Event, target?: Element): void {
-        if (!this._currentTarget) {
+        let t = target || this._currentTarget;
+        if (!t) {
             return;
         }
 
-        if (target) {
-            target.dispatchEvent(event);
-        } else {
-            this._currentTarget.dispatchEvent(event);
-        }
+        t.dispatchEvent(event);
     }
 }
