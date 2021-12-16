@@ -12,6 +12,9 @@ type moveAction = {
     stepTime: number;
 };
 
+/**
+ * 暂时EventAction只设计pc交互操作，是否应该保证单例？
+ */
 export default class EventAction {
     // 起始坐标
     private _x: number;
@@ -29,9 +32,11 @@ export default class EventAction {
         this._time = new Date().getTime();
     }
 
-    // 左键
+    /**
+     * 左键
+     */
     public down(): EventAction {
-        // TODO
+        // TODO dblclick 如何兼容
         this._currentTarget = this._getEl();
         if (this._currentTarget) {
             const pointerdown = Pointer('pointerdown', this._x, this._y, 0.5);
@@ -49,9 +54,11 @@ export default class EventAction {
         return this;
     }
 
-    // 右键
-    // 因为右键左键按下组合比较复杂并且实用性不高，暂时不考虑左右组合按下场景
-    // 即 如果down状态没有up，触发contextmenu先触发up
+    /**
+     * 点击右键 右键不考虑按下与松开两个状态
+     * 因为右键左键按下组合比较复杂并且实用性不高，暂时不考虑左右组合按下场景
+     * 即如果down状态没有up，触发contextmenu先触发up
+     */
     public contextmenu(): EventAction {
         // TODO
         if (this._currentTarget) {
@@ -75,7 +82,9 @@ export default class EventAction {
         return this;
     }
 
-    // 松开
+    /**
+     * 松开左键
+     */
     public up(): EventAction {
         const el = this._getEl();
         if (el) {
@@ -100,7 +109,7 @@ export default class EventAction {
      * 从 { this._x this._y } 到目标x，y之间线性移动
      * @param x
      * @param y
-     * @param t 移动事件 默认1s
+     * @param t 移动时间 默认1s
      * @returns
      */
     public move(x: number, y: number, t: number = 1000): EventAction {
@@ -109,8 +118,7 @@ export default class EventAction {
             this._forceStopMove();
         }
 
-        // 假设每次移动需要固定时间
-        // 应该按照距离拆分 基本上1-2px为一个单位 这里要改下 来保证不会错过事件
+        // 按照距离拆分 基本上1-2px为一个单位 来保证不会错过事件
         // 按照固定分割分成多个任务
         const dis2 = Math.sqrt(
             Math.pow(this._x - x, 2) + Math.pow(this._y - y, 2),
@@ -119,6 +127,7 @@ export default class EventAction {
         const step = Math.floor(dis2 / stepLen);
         const stepTime = t / step;
         for (let i: number = 0; i < step; i++) {
+            // TODO 是否需要取整？
             this._moveAction.push({
                 x: ((x - this._x) / step) * i + this._x,
                 y: ((y - this._y) / step) * i + this._y,
@@ -143,6 +152,15 @@ export default class EventAction {
     }
 
     /**
+     * 滚轮滚动
+     */
+    public scroll(): EventAction {
+        // TODO
+
+        return this;
+    }
+
+    /**
      * 停留
      * @param t 时间 单位ms
      */
@@ -153,7 +171,9 @@ export default class EventAction {
         return this;
     }
 
-    // 根据moveAction队列来触发事件
+    /**
+     * 根据moveAction队列来触发事件
+     */
     private _generateMove(): void {
         if (this._moveAction.length) {
             const action = this._moveAction.shift();
