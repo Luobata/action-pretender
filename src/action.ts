@@ -112,12 +112,25 @@ export default class EventAction {
         // 假设每次移动需要固定时间
         // 应该按照距离拆分 基本上1-2px为一个单位 这里要改下 来保证不会错过事件
         // 按照固定分割分成多个任务
-        const stepTime = 200;
-        const step = t / stepTime;
+        const dis2 = Math.sqrt(
+            Math.pow(this._x - x, 2) + Math.pow(this._y - y, 2),
+        );
+        const stepLen = 2;
+        const step = Math.floor(dis2 / stepLen);
+        const stepTime = t / step;
         for (let i: number = 0; i < step; i++) {
             this._moveAction.push({
                 x: ((x - this._x) / step) * i + this._x,
                 y: ((y - this._y) / step) * i + this._y,
+                stepTime,
+            });
+        }
+
+        // 其实只有不相等一种可能
+        if (dis2 / stepLen > step) {
+            this._moveAction.push({
+                x,
+                y,
                 stepTime,
             });
         }
