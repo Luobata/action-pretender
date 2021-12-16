@@ -36,20 +36,8 @@ export default class EventAction {
      * 左键
      */
     public down(): EventAction {
-        // TODO dblclick 如何兼容
-        this._currentTarget = this._getEl();
-        if (this._currentTarget) {
-            const pointerdown = Pointer('pointerdown', this._x, this._y, 0.5);
-            const mousedown = Mouse(
-                'mousedown',
-                this._x,
-                this._y,
-                this._currentTarget,
-            );
-
-            this._triggerEvent(pointerdown);
-            this._triggerEvent(mousedown);
-        }
+        // TODO delay
+        this._down();
 
         return this;
     }
@@ -61,23 +49,12 @@ export default class EventAction {
      */
     public contextmenu(): EventAction {
         // TODO
+        // 两个delay怎么兼容
+        // sleep 穿cb
         if (this._currentTarget) {
             this.up();
         }
-        const el = this._getEl();
-        if (el) {
-            const pointerdown = Pointer('pointerdown', this._x, this._y, 0.5);
-            const mousedown = Mouse(
-                'mousedown',
-                this._x,
-                this._y,
-                this._currentTarget,
-            );
-            const contextmenu = Pointer('contextmenu', this._x, this._y, 0);
-            this._triggerEvent(pointerdown);
-            this._triggerEvent(mousedown);
-            this._triggerEvent(contextmenu);
-        }
+        this._contextMenu();
 
         return this;
     }
@@ -86,21 +63,8 @@ export default class EventAction {
      * 松开左键
      */
     public up(): EventAction {
-        const el = this._getEl();
-        if (el) {
-            const pointerup = Pointer('pointerup', this._x, this._y, 0);
-            const mouseup = Mouse('mouseup', this._x, this._y, el);
-
-            this._triggerEvent(pointerup);
-            this._triggerEvent(mouseup);
-            // 如果down和up的节点相同才会触发click
-            if (this._currentTarget === el) {
-                const click = Pointer('click', this._x, this._y, 0);
-                this._triggerEvent(click);
-            }
-        }
-
-        this._currentTarget = null;
+        // TODO delay
+        this._up();
 
         return this;
     }
@@ -169,6 +133,60 @@ export default class EventAction {
         // TODO 等待t时间
 
         return this;
+    }
+
+    private _contextMenu(): void {
+        const el = this._getEl();
+        if (el) {
+            const pointerdown = Pointer('pointerdown', this._x, this._y, 0.5);
+            const mousedown = Mouse(
+                'mousedown',
+                this._x,
+                this._y,
+                this._currentTarget,
+            );
+            const contextmenu = Pointer('contextmenu', this._x, this._y, 0);
+            this._triggerEvent(pointerdown);
+            this._triggerEvent(mousedown);
+            this._triggerEvent(contextmenu);
+        }
+    }
+
+    private _down(): void {
+        // TODO dblclick 如何兼容
+        this._currentTarget = this._getEl();
+        if (this._currentTarget) {
+            const pointerdown = Pointer('pointerdown', this._x, this._y, 0.5);
+            const mousedown = Mouse(
+                'mousedown',
+                this._x,
+                this._y,
+                this._currentTarget,
+            );
+
+            this._triggerEvent(pointerdown);
+            this._triggerEvent(mousedown);
+        }
+    }
+
+    private _up(): void {
+        const el = this._getEl();
+        if (el) {
+            const pointerup = Pointer('pointerup', this._x, this._y, 0);
+            const mouseup = Mouse('mouseup', this._x, this._y, el);
+
+            this._triggerEvent(pointerup);
+            this._triggerEvent(mouseup);
+            // 如果down和up的节点相同才会触发click
+            if (this._currentTarget === el) {
+                const click = Pointer('click', this._x, this._y, 0);
+                this._triggerEvent(click);
+            }
+
+            // 如果连续两次click之间时间间隔过短触发dblclick
+        }
+
+        this._currentTarget = null;
     }
 
     /**
