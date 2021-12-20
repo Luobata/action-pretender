@@ -25,6 +25,10 @@ export default class EventAction {
 
     private _moveAction: moveAction[] = [];
 
+    private _action: { t: number; cb: Function }[] = [];
+    // 是否有进行中的action标志位
+    private _actionIng: boolean = false;
+
     constructor(x: number, y: number) {
         this._x = x;
         this._y = y;
@@ -35,9 +39,9 @@ export default class EventAction {
     /**
      * 左键
      */
-    public down(): EventAction {
+    public down(t: number = 50): EventAction {
         // TODO delay
-        this._down();
+        this._sleep(t, this._down);
 
         return this;
     }
@@ -47,14 +51,14 @@ export default class EventAction {
      * 因为右键左键按下组合比较复杂并且实用性不高，暂时不考虑左右组合按下场景
      * 即如果down状态没有up，触发contextmenu先触发up
      */
-    public contextmenu(): EventAction {
+    public contextmenu(t: number = 50): EventAction {
         // TODO
         // 两个delay怎么兼容
-        // sleep 穿cb
+        // sleep 传cb
         if (this._currentTarget) {
             this.up();
         }
-        this._contextMenu();
+        this._sleep(t, this._contextMenu);
 
         return this;
     }
@@ -62,9 +66,9 @@ export default class EventAction {
     /**
      * 松开左键
      */
-    public up(): EventAction {
+    public up(t: number = 50): EventAction {
         // TODO delay
-        this._up();
+        this._sleep(t, this._up);
 
         return this;
     }
@@ -130,9 +134,35 @@ export default class EventAction {
      */
     public sleep(t: number): EventAction {
         this._time += t;
+        // this._sleep(t)
         // TODO 等待t时间
 
         return this;
+    }
+
+    /**
+     * 手动维护过程中的任务队列
+     * @param t 延迟时间
+     * @param cb cb方法一定是同步方法，如果是异步方法会使得任务队列错乱
+     */
+    private _sleep(t: number, cb: Function): void {
+        // TODO 是否需要同步this.time
+        this._action.push({ t, cb });
+        this._doAction();
+    }
+
+    private _doAction(): void {
+        if (this._actionIng) {
+            return;
+        } else {
+            const action = this._action.shift();
+            this._actionIng = true;
+            setTimeout(() => {
+                action.cb();
+                this._actionIng = false;
+                this._doAction();
+            }, action.t);
+        }
     }
 
     private _contextMenu(): void {
