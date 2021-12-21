@@ -1,7 +1,10 @@
 /**
  * @description action-prentender 入口文件
  */
+import Click from './gesture/click';
 
-export function mClick(x: number, y: number): void {}
+export function click(x: number, y: number): void {
+    new Click(x, y);
+}
 
-export function mTap(x: number, y: number): void {}
+export function tap(x: number, y: number): void {}

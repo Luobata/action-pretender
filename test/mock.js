@@ -1,3 +1,4 @@
+import { click } from "../src";
 
 const events = [
     'dblclick',
@@ -29,3 +30,14 @@ events.forEach((t) => {
         console.log('blue', t, e)
     })
 })
+
+
+
+
+// test coding
+
+window['test'] = {
+    click: (x, y) => {
+        click(x, y);
+    }
+}
