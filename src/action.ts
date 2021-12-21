@@ -23,8 +23,6 @@ export default class EventAction {
     private _time: number;
     private _currentTarget: Element;
 
-    private _moveAction: moveAction[] = [];
-
     private _action: { t: number; cb: Function }[] = [];
     // 是否有进行中的action标志位
     private _actionIng: boolean = false;
@@ -80,11 +78,8 @@ export default class EventAction {
      * @param t 移动时间 默认1s
      * @returns
      */
-    public move(x: number, y: number, t: number = 1000): EventAction {
+    public move(x: number, y: number, totaltime: number = 1000): EventAction {
         // TODO 考虑如果一次移动没有结束时再次移动怎么处理
-        if (this._moveAction.length) {
-            this._forceStopMove();
-        }
 
         // 按照距离拆分 基本上1-2px为一个单位 来保证不会错过事件
         // 按照固定分割分成多个任务
@@ -93,27 +88,27 @@ export default class EventAction {
         );
         const stepLen = 2;
         const step = Math.floor(dis2 / stepLen);
-        const stepTime = t / step;
+        const stepTime = totaltime / step;
         for (let i: number = 0; i < step; i++) {
             // TODO 是否需要取整？
-            this._moveAction.push({
-                x: ((x - this._x) / step) * i + this._x,
-                y: ((y - this._y) / step) * i + this._y,
-                stepTime,
+            this._sleep(stepTime, () => {
+                this._generateMove({
+                    x: ((x - this._x) / step) * i + this._x,
+                    y: ((y - this._y) / step) * i + this._y,
+                    stepTime,
+                });
             });
         }
 
         // 其实只有不相等一种可能
         if (dis2 / stepLen > step) {
-            this._moveAction.push({
-                x,
-                y,
-                stepTime,
+            this._sleep(stepTime, () => {
+                this._generateMove({
+                    x,
+                    y,
+                    stepTime,
+                });
             });
-        }
-
-        if (this._moveAction.length) {
-            this._generateMove();
         }
 
         return this;
@@ -222,63 +217,55 @@ export default class EventAction {
     /**
      * 根据moveAction队列来触发事件
      */
-    private _generateMove(): void {
-        if (this._moveAction.length) {
-            const action = this._moveAction.shift();
-            // 处理move in out over之类的
+    private _generateMove(action: moveAction): void {
+        // 处理move in out over之类的
 
-            const el = this._getEl(action.x, action.y);
+        const el = this._getEl(action.x, action.y);
 
-            // 顺序是 旧节点move out leave 新节点over enter move
+        // 顺序是 旧节点move out leave 新节点over enter move
 
-            if (el !== this._currentTarget) {
-                // 有一个是不冒泡的要注意下
-                const mouseout = Mouse(
-                    'mouseout',
-                    action.x,
-                    action.y,
-                    this._currentTarget,
-                );
-                const mouseleave = Mouse(
-                    'mouseleave',
-                    action.x,
-                    action.y,
-                    this._currentTarget,
-                );
+        if (el !== this._currentTarget) {
+            // 有一个是不冒泡的要注意下
+            const mouseout = Mouse(
+                'mouseout',
+                action.x,
+                action.y,
+                this._currentTarget,
+            );
+            const mouseleave = Mouse(
+                'mouseleave',
+                action.x,
+                action.y,
+                this._currentTarget,
+            );
 
-                this._triggerEvent(mouseout);
-                this._triggerEvent(mouseleave);
+            this._triggerEvent(mouseout);
+            this._triggerEvent(mouseleave);
 
-                const mouseover = Mouse('mouseout', action.x, action.y, el);
-                const mouseenter = Mouse('mouseleave', action.x, action.y, el);
-                const mousemove = Mouse('mousedown', action.x, action.y, el, {
+            const mouseover = Mouse('mouseout', action.x, action.y, el);
+            const mouseenter = Mouse('mouseleave', action.x, action.y, el);
+            const mousemove = Mouse('mousedown', action.x, action.y, el, {
+                movementX: action.x - this._x,
+                movementY: action.y - this._y,
+            });
+
+            this._triggerEvent(mouseover, el);
+            this._triggerEvent(mouseenter, el);
+            this._triggerEvent(mousemove, el);
+
+            this._currentTarget = el;
+        } else {
+            const mousemove = Mouse(
+                'mousedown',
+                action.x,
+                action.y,
+                this._currentTarget,
+                {
                     movementX: action.x - this._x,
                     movementY: action.y - this._y,
-                });
-
-                this._triggerEvent(mouseover, el);
-                this._triggerEvent(mouseenter, el);
-                this._triggerEvent(mousemove, el);
-
-                this._currentTarget = el;
-            } else {
-                const mousemove = Mouse(
-                    'mousedown',
-                    action.x,
-                    action.y,
-                    this._currentTarget,
-                    {
-                        movementX: action.x - this._x,
-                        movementY: action.y - this._y,
-                    },
-                );
-                this._triggerEvent(mousemove, this._currentTarget);
-            }
-
-            // 执行完再setTimeout保证不会有任务被取消了还在异步中被执行到
-            setTimeout(() => {
-                this._generateMove();
-            }, action.stepTime);
+                },
+            );
+            this._triggerEvent(mousemove, this._currentTarget);
         }
     }
 
