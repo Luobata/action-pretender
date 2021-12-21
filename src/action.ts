@@ -237,6 +237,7 @@ export default class EventAction {
         const el = this._getEl(action.x, action.y);
 
         // 顺序是 旧节点move out leave 新节点over enter move
+        // BUG currentTarget为null的时候不应该触发over enter
 
         if (el !== this._currentTarget) {
             // 有一个是不冒泡的要注意下
@@ -256,9 +257,9 @@ export default class EventAction {
             this._triggerEvent(mouseout);
             this._triggerEvent(mouseleave);
 
-            const mouseover = Mouse('mouseout', action.x, action.y, el);
-            const mouseenter = Mouse('mouseleave', action.x, action.y, el);
-            const mousemove = Mouse('mousedown', action.x, action.y, el, {
+            const mouseover = Mouse('mouseover', action.x, action.y, el);
+            const mouseenter = Mouse('mouseenter', action.x, action.y, el);
+            const mousemove = Mouse('mousemove', action.x, action.y, el, {
                 movementX: action.x - this._x,
                 movementY: action.y - this._y,
             });
@@ -270,7 +271,7 @@ export default class EventAction {
             this._currentTarget = el;
         } else {
             const mousemove = Mouse(
-                'mousedown',
+                'mousemove',
                 action.x,
                 action.y,
                 this._currentTarget,

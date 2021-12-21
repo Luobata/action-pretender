@@ -6,10 +6,13 @@ import EventAction from '../action';
 export default abstract class Gesture {
     constructor(x: number, y: number) {
         this.getAction(x, y);
-        this.mockEvent();
     }
 
     protected Action: EventAction;
+
+    public start(): void {
+        this.mockEvent();
+    }
 
     protected abstract getAction(x: number, y: number): void;
 

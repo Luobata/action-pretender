@@ -1,4 +1,4 @@
-import { click, dblclick } from "../src";
+import { click, dblclick ,move} from "../src";
 
 const events = [
     'dblclick',
@@ -44,5 +44,8 @@ window['test'] = {
     // window.test.dblclick(74, 35)
     dblclick: (x, y) => {
         dblclick(x, y);
+    },
+    move: (x1, y1, x2, y2) => {
+        move(x1, y1, x2, y2)
     },
 }
