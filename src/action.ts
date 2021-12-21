@@ -269,12 +269,6 @@ export default class EventAction {
         }
     }
 
-    // 用来提前终止move
-    private _forceStopMove(): void {
-        // 清空队列
-        this._moveAction = [];
-    }
-
     /**
      * 获取当前坐标元素
      */
