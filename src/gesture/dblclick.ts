@@ -3,8 +3,6 @@
  * pc用户
  */
 
-import { Pointer } from '../event-util';
-import click from './click';
 import SingleFingerGesture from './single-finger-gesture';
 
 export default class extends SingleFingerGesture {

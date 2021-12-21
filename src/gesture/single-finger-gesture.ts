@@ -9,8 +9,6 @@ export default abstract class SingleFingerGesture extends Gesture {
     protected _x: number;
     protected _y: number;
 
-    protected Action: EventAction;
-
     constructor(x: number, y: number) {
         super();
 
