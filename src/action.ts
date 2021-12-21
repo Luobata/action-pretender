@@ -27,6 +27,9 @@ export default class EventAction {
     // 是否有进行中的action标志位
     private _actionIng: boolean = false;
 
+    private _lastClickTime: number;
+    private _minDblclickTime: number = 200;
+
     constructor(x: number, y: number) {
         this._x = x;
         this._y = y;
@@ -206,6 +209,17 @@ export default class EventAction {
             if (this._currentTarget === el) {
                 const click = Pointer('click', this._x, this._y, 0);
                 this._triggerEvent(click);
+
+                const nowTime = new Date().getTime();
+                if (
+                    this._lastClickTime &&
+                    nowTime - this._lastClickTime < this._minDblclickTime
+                ) {
+                    const dblclick = Pointer('dblclick', this._x, this._y, 0);
+                    this._triggerEvent(dblclick);
+                }
+
+                this._lastClickTime = nowTime;
             }
 
             // 如果连续两次click之间时间间隔过短触发dblclick
