@@ -6,15 +6,11 @@ import EventAction from '../action';
 import Gesture from './gesture';
 
 export default abstract class SingleFingerGesture extends Gesture {
-    protected _x: number;
-    protected _y: number;
-
     constructor(x: number, y: number) {
-        super();
+        super(x, y);
+    }
 
-        this._x = x;
-        this._y = y;
-
-        this.Action = new EventAction(this._x, this._y);
+    protected getAction(x: number, y: number): void {
+        this.Action = new EventAction(x, y);
     }
 }

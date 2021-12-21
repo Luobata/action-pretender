@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "build": "node build/bundle.js",
-        "test": "esbuild --bundle test/mock.js --outdir=www/js --servedir=www"
+        "test": "esbuild --bundle --sourcemap test/mock.js --outdir=www/js --servedir=www"
     },
     "repository": {
         "type": "git",

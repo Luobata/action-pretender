@@ -149,11 +149,11 @@ export default class EventAction {
     private _doAction(): void {
         if (this._actionIng) {
             return;
-        } else {
+        } else if (this._action.length) {
             const action = this._action.shift();
             this._actionIng = true;
             setTimeout(() => {
-                action.cb();
+                action.cb.call(this);
                 this._actionIng = false;
                 this._doAction();
             }, action.t);
@@ -275,8 +275,8 @@ export default class EventAction {
     private _getEl(x?: number, y?: number): Element {
         // 防止0漏了
         const el = document.elementFromPoint(
-            x === undefined ? x : this._x,
-            y === undefined ? y : this._y,
+            x !== undefined ? x : this._x,
+            y !== undefined ? y : this._y,
         );
 
         return el;

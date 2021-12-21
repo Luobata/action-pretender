@@ -1,4 +1,4 @@
-import { click } from "../src";
+import { click, dblclick } from "../src";
 
 const events = [
     'dblclick',
@@ -37,7 +37,12 @@ events.forEach((t) => {
 // test coding
 
 window['test'] = {
+    // window.test.click(74, 35)
     click: (x, y) => {
         click(x, y);
-    }
+    },
+    // window.test.dblclick(74, 35)
+    dblclick: (x, y) => {
+        dblclick(x, y);
+    },
 }
