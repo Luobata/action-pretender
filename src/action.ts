@@ -118,10 +118,44 @@ export default class EventAction {
     }
 
     /**
+     * scroll可以认为是一种move 但是与move不同的是scroll过程中不触发元素的move事件
+     * 暂时认为scroll只有y轴坐标的变化没有坐标scroll行为（其实可能有）
      * 滚轮滚动
+     * @param dis       距离
+     * @param totaltime scroll所需要的时间
      */
-    public scroll(): EventAction {
-        // TODO
+    public scroll(dis: number, totaltime: number = 1000): EventAction {
+        const stepLen = 2;
+        const step = Math.floor(dis / stepLen);
+        const stepTime = totaltime / step;
+
+        for (let i: number = 0; i < step; i++) {
+            // TODO 是否需要取整？
+            this._sleep(stepTime, () => {
+                this._generateMove(
+                    {
+                        x: this._x,
+                        y: (dis / step) * i + this._y,
+                        stepTime,
+                    },
+                    false,
+                );
+            });
+        }
+
+        // 其实只有不相等一种可能
+        if (dis / stepLen > step) {
+            this._sleep(stepTime, () => {
+                this._generateMove(
+                    {
+                        x: this._x,
+                        y: this._y + dis,
+                        stepTime,
+                    },
+                    false,
+                );
+            });
+        }
 
         return this;
     }
@@ -230,8 +264,10 @@ export default class EventAction {
 
     /**
      * 根据moveAction队列来触发事件
+     * @param action moveAction
+     * @param hasMove 是否触发movemove事件 scroll触发的move不触发
      */
-    private _generateMove(action: moveAction): void {
+    private _generateMove(action: moveAction, hasMove: boolean = true): void {
         // 处理move in out over之类的
 
         const el = this._getEl(action.x, action.y);
@@ -267,7 +303,10 @@ export default class EventAction {
 
             this._triggerEvent(mouseover, el);
             this._triggerEvent(mouseenter, el);
-            this._triggerEvent(mousemove, el);
+
+            if (hasMove) {
+                this._triggerEvent(mousemove, el);
+            }
 
             this._currentTarget = el;
         } else {
@@ -284,7 +323,9 @@ export default class EventAction {
                     movementY: action.y - this._y,
                 },
             );
-            this._triggerEvent(mousemove, this._currentTarget);
+            if (hasMove) {
+                this._triggerEvent(mousemove, this._currentTarget);
+            }
         }
     }
 
