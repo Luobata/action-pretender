@@ -239,7 +239,8 @@ export default class EventAction {
         // 顺序是 旧节点move out leave 新节点over enter move
         // BUG currentTarget为null的时候不应该触发over enter
 
-        if (el !== this._currentTarget) {
+        // currentTarget不能为null
+        if (this._currentTarget && el !== this._currentTarget) {
             // 有一个是不冒泡的要注意下
             const mouseout = Mouse(
                 'mouseout',
@@ -270,6 +271,9 @@ export default class EventAction {
 
             this._currentTarget = el;
         } else {
+            if (!this._currentTarget) {
+                this._currentTarget = el;
+            }
             const mousemove = Mouse(
                 'mousemove',
                 action.x,
