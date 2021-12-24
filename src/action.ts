@@ -4,6 +4,7 @@
  * action 包括 点 拖 放 等（动词）
  */
 
+import CommonEventAction from './common-event-action';
 import { Mouse, Pointer } from './event-util';
 
 type moveAction = {
@@ -15,13 +16,10 @@ type moveAction = {
 /**
  * 暂时EventAction只设计pc交互操作，是否应该保证单例？
  */
-export default class EventAction {
+export default class EventAction extends CommonEventAction {
     // 起始坐标
-    private _x: number;
-    private _y: number;
 
     private _time: number;
-    private _currentTarget: Element;
 
     private _action: { t: number; cb: Function }[] = [];
     // 是否有进行中的action标志位
@@ -31,6 +29,7 @@ export default class EventAction {
     private _minDblclickTime: number = 200;
 
     constructor(x: number, y: number) {
+        super();
         this._x = x;
         this._y = y;
 
@@ -327,27 +326,5 @@ export default class EventAction {
                 this._triggerEvent(mousemove, this._currentTarget);
             }
         }
-    }
-
-    /**
-     * 获取当前坐标元素
-     */
-    private _getEl(x?: number, y?: number): Element {
-        // 防止0漏了
-        const el = document.elementFromPoint(
-            x !== undefined ? x : this._x,
-            y !== undefined ? y : this._y,
-        );
-
-        return el;
-    }
-
-    private _triggerEvent(event: Event, target?: Element): void {
-        let t = target || this._currentTarget;
-        if (!t) {
-            return;
-        }
-
-        t.dispatchEvent(event);
     }
 }
