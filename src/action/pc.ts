@@ -21,10 +21,6 @@ export default class EventAction extends CommonEventAction {
 
     private _time: number;
 
-    private _action: { t: number; cb: Function }[] = [];
-    // 是否有进行中的action标志位
-    private _actionIng: boolean = false;
-
     private _lastClickTime: number;
     private _minDblclickTime: number = 200;
 

@@ -3,6 +3,9 @@
  */
 
 export default class CommonEventAction {
+    protected _action: { t: number; cb: Function }[] = [];
+    // 是否有进行中的action标志位
+    protected _actionIng: boolean = false;
     protected _x: number;
     protected _y: number;
     protected _currentTarget: Element;
