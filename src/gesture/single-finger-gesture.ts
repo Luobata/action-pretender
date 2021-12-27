@@ -2,7 +2,7 @@
  * @desc single-finger-gesture
  */
 
-import EventAction from '../action';
+import EventAction from '../action/action';
 import Gesture from './gesture';
 
 export default abstract class SingleFingerGesture extends Gesture {

@@ -1,7 +1,7 @@
 /**
  * @desc 手势父类
  */
-import EventAction from '../action';
+import EventAction from '../action/action';
 
 export default abstract class Gesture {
     constructor(x: number, y: number) {

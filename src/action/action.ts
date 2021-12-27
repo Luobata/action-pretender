@@ -4,8 +4,8 @@
  * action 包括 点 拖 放 等（动词）
  */
 
-import CommonEventAction from './common-event-action';
-import { Mouse, Pointer } from './event-util';
+import CommonEventAction from '../common-event-action';
+import { Mouse, Pointer } from '../event-util';
 
 type moveAction = {
     x: number;
