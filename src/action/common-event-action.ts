@@ -2,6 +2,8 @@
  * @desc common event action
  */
 
+import Finger from './finger';
+
 export default class CommonEventAction {
     protected _action: { t: number; cb: Function }[] = [];
     // 是否有进行中的action标志位
@@ -9,6 +11,16 @@ export default class CommonEventAction {
     protected _x: number;
     protected _y: number;
     protected _currentTarget: Element;
+
+    /**
+     * 根据finger获取元素
+     *
+     * @param finger finger
+     * @returns Element
+     */
+    protected _getElByFinger(finger: Finger): Element {
+        return this._getEl(finger.x, finger.y);
+    }
     /**
      * 获取当前坐标元素
      */
