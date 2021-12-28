@@ -1,5 +1,5 @@
 /**
- * @desc finger对象
+ * @desc finger对象(只针对mobile)
  */
 
 // globalFingerId
@@ -18,7 +18,12 @@ export default class Finger {
     public down(t: number): Finger {
         return this;
     }
+
     public off(t: number): Finger {
+        return this;
+    }
+
+    public move(x: number, y: number): Finger {
         return this;
     }
 }

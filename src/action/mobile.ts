@@ -26,19 +26,14 @@ export default class MobileAction extends CommonEventAction {
 
     // 手指按下
     public down(fingerId: number | Finger, t: number = 50): MobileAction {
-        const finger = this._getFinger(fingerId);
-        if (finger) {
-            finger.down(t);
-        }
+        this._getFinger(fingerId).down(t);
 
         return this;
     }
 
     public off(fingerId: number | Finger, t: number = 50): MobileAction {
-        const finger = this._getFinger(fingerId);
-        if (finger) {
-            finger.off(t);
-        }
+        this._getFinger(fingerId).off(t);
+
         return this;
     }
 
@@ -53,6 +48,10 @@ export default class MobileAction extends CommonEventAction {
             finger = this.fingerMap.get(fingerId);
         } else {
             finger = fingerId;
+        }
+
+        if (!finger) {
+            throw new Error('not found correct finger');
         }
 
         return finger;
