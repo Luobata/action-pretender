@@ -24,6 +24,7 @@ export default class MobileAction extends CommonEventAction {
         return finger;
     }
 
+    // TODO 怎么可以把这些函数直接代理过去
     // 手指按下
     public down(fingerId: number | Finger, t: number = 50): MobileAction {
         this._getFinger(fingerId).down(t);
@@ -37,7 +38,14 @@ export default class MobileAction extends CommonEventAction {
         return this;
     }
 
-    public move(t: number = 50): MobileAction {
+    public move(
+        fingerId: number | Finger,
+        x: number,
+        y: number,
+        t: number = 50,
+    ): MobileAction {
+        this._getFinger(fingerId).move(x, y, t);
+
         return this;
     }
 
