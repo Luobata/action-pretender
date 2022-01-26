@@ -13,6 +13,7 @@ import Finger from './finger';
 export default class MobileAction extends CommonEventAction {
     private fingerMap: Map<number, Finger> = new Map();
 
+
     constructor() {
         super();
     }

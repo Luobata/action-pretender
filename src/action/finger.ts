@@ -2,6 +2,9 @@
  * @desc finger对象(只针对mobile)
  */
 
+import { Pointer, sTouch } from '../event-util';
+import MobileAction from './mobile';
+
 // globalFingerId 用来在父容器中行程map 不能重复
 let fingerId: number = 0;
 
@@ -10,6 +13,8 @@ export default class Finger {
     public y: number;
     public id: number = fingerId++;
 
+    protected _currentTarget: Element;
+    protected _lastTarget: Element;
     private _action: { t: number; cb: Function }[] = [];
     // 是否有进行中的action标志位
     private _actionIng: boolean = false;
@@ -21,6 +26,8 @@ export default class Finger {
 
     // TODO 把pc.ts里面一些相似方法移植过来
     public down(t: number): Finger {
+        this._sleep(t, this._down);
+
         return this;
     }
 
@@ -30,6 +37,42 @@ export default class Finger {
 
     public move(x: number, y: number, t: number = 1000): Finger {
         return this;
+    }
+
+    private _down(): void {
+        // 真实的down
+        this._currentTarget = this._getEl();
+        if (this._currentTarget) {
+            const pointerdown = Pointer('pointerdown', this.x, this.y, 0.5);
+            const touchstart = sTouch(
+                'touchstart',
+                this.x,
+                this.y,
+                this._currentTarget,
+            );
+
+            this._triggerEvent(pointerdown);
+            this._triggerEvent(touchstart);
+        }
+    }
+
+    private _up(): void {
+        const el = this._getEl();
+
+        if (this._lastTarget) {
+            // TODO touchend 只有changedTouches 没有touches
+            const touchend = sTouch(
+                'touchend',
+                this.x,
+                this.y,
+                this._currentTarget,
+            );
+
+            this._triggerEvent(touchend);
+
+            this._currentTarget = null;
+        }
+        // TODO 真实的移动端是否有click要试一下
     }
 
     // 这些方法应该在Finger对象上，后续对pc做一个基于finger的抽象
@@ -42,10 +85,39 @@ export default class Finger {
     protected _getEl(x?: number, y?: number): Element {
         // 防止0漏了
         const el = document.elementFromPoint(
-            x !== undefined ? x : this._x,
-            y !== undefined ? y : this._y,
+            x !== undefined ? x : this.x,
+            y !== undefined ? y : this.y,
         );
 
         return el;
+    }
+
+    private _sleep(t: number, cb: Function): void {
+        // TODO 是否需要同步this.time
+        this._action.push({ t, cb });
+        this._doAction();
+    }
+
+    private _doAction(): void {
+        if (this._actionIng) {
+            return;
+        } else if (this._action.length) {
+            const action = this._action.shift();
+            this._actionIng = true;
+            setTimeout(() => {
+                action.cb.call(this);
+                this._actionIng = false;
+                this._doAction();
+            }, action.t);
+        }
+    }
+
+    private _triggerEvent(event: Event, target?: Element): void {
+        let t = target || this._currentTarget;
+        if (!t) {
+            return;
+        }
+
+        t.dispatchEvent(event);
     }
 }

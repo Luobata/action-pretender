@@ -1,4 +1,4 @@
-import { click, dblclick ,move} from "../src";
+import { click, dblclick, move } from '../src';
 
 const events = [
     'dblclick',
@@ -12,27 +12,24 @@ const events = [
     'touchcancel',
     'contextmenu',
 
-     'mousemove',
-     'mouseenter',
-     'mouseover',
-     'mouseleave',
-     'mouseout',
-]
+    'mousemove',
+    'mouseenter',
+    'mouseover',
+    'mouseleave',
+    'mouseout',
+];
 
 const app = document.getElementById('app');
 const app2 = document.getElementById('app2');
 
 events.forEach((t) => {
-    app.addEventListener(t, e => {
-        console.log('red', t, e)
-    })
-    app2.addEventListener(t, e => {
-        console.log('blue', t, e)
-    })
-})
-
-
-
+    app.addEventListener(t, (e) => {
+        console.log('red', t, e);
+    });
+    app2.addEventListener(t, (e) => {
+        console.log('blue', t, e);
+    });
+});
 
 // test coding
 
@@ -45,7 +42,8 @@ window['test'] = {
     dblclick: (x, y) => {
         dblclick(x, y);
     },
+    // window.test.move(60, 94, 76, 121)
     move: (x1, y1, x2, y2) => {
-        move(x1, y1, x2, y2)
+        move(x1, y1, x2, y2);
     },
-}
+};
