@@ -32,10 +32,40 @@ export default class Finger {
     }
 
     public off(t: number): Finger {
+        this._sleep(t, this._up);
+
         return this;
     }
 
     public move(x: number, y: number, t: number = 1000): Finger {
+        // 按照距离拆分 基本上1-2px为一个单位 来保证不会错过事件
+        // 按照固定分割分成多个任务
+        const dis2 = Math.sqrt(
+            Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2),
+        );
+        const stepLen = 2;
+        const step = Math.floor(dis2 / stepLen);
+        const stepTime = t / step;
+        for (let i: number = 0; i < step; i++) {
+            // TODO 是否需要取整？
+            this._sleep(stepTime, () => {
+                this._move(
+                    ((x - this.x) / step) * i + this.x,
+                    ((y - this.y) / step) * i + this.y,
+                    stepTime,
+                );
+            });
+        }
+
+        // 其实只有不相等一种可能
+        if (dis2 / stepLen > step) {
+            this._sleep(stepTime, () => {
+                this.move(x, y, stepTime);
+            });
+        }
+
+        return this;
+
         return this;
     }
 
@@ -73,6 +103,11 @@ export default class Finger {
             this._currentTarget = null;
         }
         // TODO 真实的移动端是否有click要试一下
+    }
+
+    // 对应的的touch事件合成相关
+    private _move(x: number, y: number, t: number): void {
+        // TODO
     }
 
     // 这些方法应该在Finger对象上，后续对pc做一个基于finger的抽象
