@@ -65,8 +65,6 @@ export default class Finger {
         }
 
         return this;
-
-        return this;
     }
 
     private _down(): void {
@@ -107,7 +105,13 @@ export default class Finger {
 
     // 对应的的touch事件合成相关
     private _move(x: number, y: number, t: number): void {
-        // TODO
+        if (this._currentTarget) {
+            // 有cureent一定触发过start
+            const pointerdown = Pointer('pointerdown', this.x, this.y, 0.5);
+            const touchmove = sTouch('touchmove', x, y, this._currentTarget);
+
+            this._triggerEvent(touchmove, this._currentTarget);
+        }
     }
 
     // 这些方法应该在Finger对象上，后续对pc做一个基于finger的抽象
