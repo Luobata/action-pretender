@@ -1,14 +1,12 @@
 /**
  * @desc 手势父类
  */
-import EventAction from '../action/pc';
+import CommonEventAction from '../action/common-event-action';
 
 export default abstract class Gesture {
-    constructor(x: number, y: number) {
-        this.getAction(x, y);
-    }
+    constructor() {}
 
-    protected Action: EventAction;
+    protected Action: CommonEventAction;
 
     public start(): void {
         this.mockEvent();

@@ -6,8 +6,12 @@ import EventAction from '../action/pc';
 import Gesture from './gesture';
 
 export default abstract class SingleFingerGesture extends Gesture {
+    protected Action: EventAction;
+
     constructor(x: number, y: number) {
-        super(x, y);
+        super();
+
+        this.getAction(x, y);
     }
 
     protected getAction(x: number, y: number): void {
