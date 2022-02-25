@@ -7,8 +7,10 @@ const events = [
     'mouseup',
     'pointerup',
     'pointerdown',
+
     'touchstart',
     'touchend',
+    'touchmove',
     'touchcancel',
     'contextmenu',
 
@@ -47,3 +49,5 @@ window['test'] = {
         move(x1, y1, x2, y2);
     },
 };
+
+console.log(1234);
