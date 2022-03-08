@@ -15,4 +15,6 @@ export default abstract class MultiFingerGesture extends Gesture {
     protected getAction(): void {
         this.Action = new mobile();
     }
+
+    abstract mockEvent(x: number, y: number): void;
 }

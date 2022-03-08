@@ -16,7 +16,5 @@ export default abstract class Gesture {
 
     // protected abstract getAction(): void;
 
-    abstract mockEvent(): void;
-
-    abstract mockEvent(x: number, y: number): void;
+    abstract mockEvent(x?: number, y?: number): void;
 }

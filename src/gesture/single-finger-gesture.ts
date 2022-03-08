@@ -14,6 +14,8 @@ export default abstract class SingleFingerGesture extends Gesture {
         this.getAction(x, y);
     }
 
+    abstract mockEvent(): void;
+
     protected getAction(x: number, y: number): void {
         this.Action = new EventAction(x, y);
     }
